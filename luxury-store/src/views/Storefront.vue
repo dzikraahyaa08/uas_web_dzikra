@@ -239,10 +239,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { apiClient } from '../services/api'
 
 const products = ref([])
 const loading = ref(true)
+
+const router = useRouter()
 
 // Cart State
 const cart = ref([])
@@ -286,6 +289,13 @@ const openCheckout = () => {
 
 const processCheckout = async () => {
   if (!isCheckoutValid.value) return
+
+  const token = localStorage.getItem('token')
+  if (!token) {
+    alert('Silakan login terlebih dahulu untuk melakukan checkout.')
+    router.push('/login')
+    return
+  }
   
   isProcessing.value = true
   
