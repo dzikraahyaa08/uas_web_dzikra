@@ -86,7 +86,7 @@ const drawer = ref(true)
 
 const handleLogout = () => {
   localStorage.removeItem('token')
-  router.push('/')
+  router.push('/login')
 }
 </script>
 
