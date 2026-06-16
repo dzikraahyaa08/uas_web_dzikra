@@ -331,12 +331,29 @@ const scrollToProducts = () => {
 
 const fetchProducts = async () => {
   loading.value = true
+
+  // Fallback sample products to show if API requires authentication
+  const sampleProducts = [
+    { product_id: 'sample-1', name: 'Jaket Kulit Premium', brand_name: 'Maison Luxe', price: 2500000 },
+    { product_id: 'sample-2', name: 'Sepatu Formal Classic', brand_name: 'Elegance Co.', price: 1750000 },
+    { product_id: 'sample-3', name: 'Tas Tangan Eksklusif', brand_name: 'Aurora', price: 3200000 },
+    { product_id: 'sample-4', name: 'Kemeja Sutra', brand_name: 'Silken', price: 950000 }
+  ]
+
   try {
     const res = await apiClient('/products')
-    const data = await res.json()
-    products.value = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+
+    if (res.status === 401) {
+      // Backend requires authentication — use local sample data so storefront still shows collections
+      console.warn('API requires authentication; showing sample products on storefront.')
+      products.value = sampleProducts
+    } else {
+      const data = await res.json()
+      products.value = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+    }
   } catch (error) {
     console.error('Error fetching products:', error)
+    products.value = sampleProducts
   } finally {
     loading.value = false
   }
