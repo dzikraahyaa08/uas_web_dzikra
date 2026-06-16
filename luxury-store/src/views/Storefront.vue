@@ -314,16 +314,32 @@ const processCheckout = async () => {
   isProcessing.value = true
   
   try {
+    // Build order items array dari cart
+    const orderItems = cart.value.map(item => ({
+      product_id: item.product_id,
+      quantity: 1,
+      price: item.price
+    }))
+
     const payload = {
-      user_id: 2, // Memakai user_id dari database (budi_luxury) sebagai representasi pembeli
+      user_id: 2,
       total_amount: cartTotal.value,
-      status: 'Pending'
+      status: 'Pending',
+      customer_name: checkoutData.value.nama,
+      customer_phone: checkoutData.value.telepon,
+      customer_address: checkoutData.value.alamat,
+      items: orderItems
     }
+    
+    console.log('Sending order payload:', payload)
     
     const res = await apiClient('/orders', {
       method: 'POST',
       body: JSON.stringify(payload)
     })
+    
+    const responseData = await res.json()
+    console.log('Order response:', res.status, responseData)
     
     if (res.ok) {
       checkoutDialog.value = false
@@ -331,15 +347,13 @@ const processCheckout = async () => {
       checkoutData.value = { nama: '', telepon: '', alamat: '' }
       alert('✅ Pesanan berhasil dibuat!\n\nPesanan dengan total Rp ' + formatPrice(cartTotal.value) + ' sekarang akan muncul di panel Admin (Kelola Pesanan).')
     } else if (res.status === 400) {
-      const errorData = await res.json()
-      alert('❌ Validasi Error:\n' + (errorData.message || 'Data tidak valid. Silakan cek kembali.'))
+      alert('❌ Validasi Error:\n' + (responseData.message || responseData.error || JSON.stringify(responseData)))
     } else if (res.status === 401) {
       alert('❌ Sesi Anda telah berakhir. Silakan login kembali.')
       localStorage.removeItem('token')
       router.push('/login')
     } else {
-      const errorData = await res.json()
-      alert('❌ Gagal membuat pesanan:\n' + (errorData.message || 'Terjadi kesalahan pada server. Coba lagi nanti.'))
+      alert('❌ Gagal membuat pesanan:\n' + (responseData.message || responseData.error || 'Terjadi kesalahan pada server. Coba lagi nanti.'))
     }
   } catch (error) {
     console.error('Checkout error:', error)
