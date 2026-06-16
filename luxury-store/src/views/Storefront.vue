@@ -341,7 +341,7 @@ const fetchProducts = async () => {
   ]
 
   try {
-    const res = await apiClient('/products')
+    const res = await apiClient('/products', { skipAuthRedirect: true })
 
     if (res.status === 401) {
       // Backend requires authentication — use local sample data so storefront still shows collections

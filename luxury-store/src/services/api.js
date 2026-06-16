@@ -6,10 +6,12 @@ const API_URL = '/api'
 
 export const apiClient = async (endpoint, options = {}) => {
   const token = localStorage.getItem('token')
-  
+
+  const { skipAuthRedirect = false, headers: customHeaders, ...fetchOptions } = options
+
   const headers = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...customHeaders,
   }
 
   if (token) {
@@ -17,12 +19,12 @@ export const apiClient = async (endpoint, options = {}) => {
   }
 
   const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
+    ...fetchOptions,
     headers,
   })
 
-  // Jika token tidak valid / unauthorized, redirect ke login
-  if (response.status === 401 && endpoint !== '/login') {
+  // Jika token tidak valid / unauthorized, redirect ke login kecuali pemanggil meminta untuk melewatkan redirect
+  if (response.status === 401 && endpoint !== '/login' && !skipAuthRedirect) {
     localStorage.removeItem('token')
     window.location.href = '/login'
   }
