@@ -284,21 +284,38 @@ const openCheckout = () => {
   checkoutDialog.value = true
 }
 
-const processCheckout = () => {
+const processCheckout = async () => {
   if (!isCheckoutValid.value) return
   
   isProcessing.value = true
   
-  // Simulate API call for checkout
-  setTimeout(() => {
-    isProcessing.value = false
-    checkoutDialog.value = false
-    cart.value = []
-    checkoutData.value = { nama: '', telepon: '', alamat: '' }
+  try {
+    const payload = {
+      user_id: 2, // Memakai user_id dari database (budi_luxury) sebagai representasi pembeli
+      total_amount: cartTotal.value,
+      status: 'Pending'
+    }
     
-    // In a real app we'd use a proper notification system
-    alert('Pesanan berhasil dibuat! Terima kasih telah berbelanja di Luxury Store.')
-  }, 1500)
+    const res = await apiClient('/orders', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    
+    if (res.ok) {
+      checkoutDialog.value = false
+      cart.value = []
+      checkoutData.value = { nama: '', telepon: '', alamat: '' }
+      alert('Pesanan berhasil dibuat! Pesanan ini sekarang akan muncul di panel Admin (Kelola Pesanan).')
+    } else {
+      const errorData = await res.json()
+      alert('Gagal: ' + (errorData.meta?.message || errorData.message || 'Gagal menyimpan pesanan ke server'))
+    }
+  } catch (error) {
+    console.error(error)
+    alert('Terjadi kesalahan jaringan saat mencoba membuat pesanan.')
+  } finally {
+    isProcessing.value = false
+  }
 }
 
 const scrollTo = (id) => {
