@@ -311,6 +311,14 @@ const processCheckout = async () => {
     return
   }
   
+  const userId = localStorage.getItem('user_id')
+  if (!userId) {
+    alert('Session expired. Silakan login kembali.')
+    localStorage.removeItem('token')
+    router.push('/login')
+    return
+  }
+  
   isProcessing.value = true
   
   try {
@@ -322,7 +330,7 @@ const processCheckout = async () => {
     }))
 
     const payload = {
-      user_id: 2,
+      user_id: parseInt(userId),
       total_amount: cartTotal.value,
       status: 'Pending',
       customer_name: checkoutData.value.nama,

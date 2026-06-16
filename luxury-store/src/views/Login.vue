@@ -98,6 +98,12 @@ const handleLogin = async () => {
     
     if (response.ok && data.data?.token) {
       localStorage.setItem('token', data.data.token)
+      // Simpan user_id juga untuk transaksi
+      if (data.data?.user?.user_id) {
+        localStorage.setItem('user_id', data.data.user.user_id)
+      } else if (data.data?.user_id) {
+        localStorage.setItem('user_id', data.data.user_id)
+      }
       router.push('/admin/dashboard')
     } else if (response.status === 401) {
       errorMsg.value = 'Username atau password salah'
