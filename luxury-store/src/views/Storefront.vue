@@ -283,12 +283,26 @@ const removeFromCart = (index) => {
 }
 
 const openCheckout = () => {
+  if (cart.value.length === 0) {
+    alert('Keranjang belanja Anda kosong. Silakan tambahkan produk terlebih dahulu.')
+    return
+  }
   cartDrawer.value = false
   checkoutDialog.value = true
 }
 
 const processCheckout = async () => {
-  if (!isCheckoutValid.value) return
+  // Validasi cart
+  if (cart.value.length === 0) {
+    alert('Keranjang belanja kosong. Silakan tambahkan produk terlebih dahulu.')
+    return
+  }
+
+  // Validasi form
+  if (!checkoutData.value.nama || !checkoutData.value.telepon || !checkoutData.value.alamat) {
+    alert('Silakan lengkapi semua data pengiriman (Nama, Nomor Telepon, Alamat)')
+    return
+  }
 
   const token = localStorage.getItem('token')
   if (!token) {
@@ -315,14 +329,21 @@ const processCheckout = async () => {
       checkoutDialog.value = false
       cart.value = []
       checkoutData.value = { nama: '', telepon: '', alamat: '' }
-      alert('Pesanan berhasil dibuat! Pesanan ini sekarang akan muncul di panel Admin (Kelola Pesanan).')
+      alert('✅ Pesanan berhasil dibuat!\n\nPesanan dengan total Rp ' + formatPrice(cartTotal.value) + ' sekarang akan muncul di panel Admin (Kelola Pesanan).')
+    } else if (res.status === 400) {
+      const errorData = await res.json()
+      alert('❌ Validasi Error:\n' + (errorData.message || 'Data tidak valid. Silakan cek kembali.'))
+    } else if (res.status === 401) {
+      alert('❌ Sesi Anda telah berakhir. Silakan login kembali.')
+      localStorage.removeItem('token')
+      router.push('/login')
     } else {
       const errorData = await res.json()
-      alert('Gagal: ' + (errorData.meta?.message || errorData.message || 'Gagal menyimpan pesanan ke server'))
+      alert('❌ Gagal membuat pesanan:\n' + (errorData.message || 'Terjadi kesalahan pada server. Coba lagi nanti.'))
     }
   } catch (error) {
-    console.error(error)
-    alert('Terjadi kesalahan jaringan saat mencoba membuat pesanan.')
+    console.error('Checkout error:', error)
+    alert('❌ Kesalahan Jaringan:\nTidak dapat terhubung ke server. Periksa koneksi internet Anda.')
   } finally {
     isProcessing.value = false
   }
