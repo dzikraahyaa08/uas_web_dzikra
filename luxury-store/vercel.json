@@ -1,24 +1,12 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
+      "source": "/api/:path*",
+      "destination": "https://luxury-store-api-2.vercel.app/api/:path*"
     },
     {
-      "src": "^/api/(.*)$",
-      "dest": "https://luxury-store-api-2.vercel.app/api/$1"
-    },
-    {
-      "src": "^/(.*)$",
-      "dest": "/index.html"
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }
