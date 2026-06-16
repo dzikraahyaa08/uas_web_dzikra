@@ -356,6 +356,10 @@ const fetchProducts = async () => {
     products.value = sampleProducts
   } finally {
     loading.value = false
+    // Extra guard: if products still empty (edge cases / timing), show sample products
+    if (!products.value || products.value.length === 0) {
+      products.value = sampleProducts
+    }
   }
 }
 
