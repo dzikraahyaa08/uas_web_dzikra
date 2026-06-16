@@ -103,9 +103,13 @@ const fetchBrands = async () => {
   loading.value = true
   try {
     const res = await apiClient('/brands')
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`)
+    }
     const data = await res.json()
     brands.value = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
   } catch (error) {
+    console.error('Error fetching brands:', error)
     showMessage('Gagal mengambil data merek', 'error')
   } finally {
     loading.value = false

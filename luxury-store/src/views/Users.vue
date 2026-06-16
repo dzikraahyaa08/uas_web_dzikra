@@ -128,9 +128,13 @@ const fetchUsers = async () => {
   loading.value = true
   try {
     const res = await apiClient('/users')
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`)
+    }
     const data = await res.json()
     users.value = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
   } catch (error) {
+    console.error('Error fetching users:', error)
     showMessage('Gagal mengambil data pengguna', 'error')
   } finally {
     loading.value = false

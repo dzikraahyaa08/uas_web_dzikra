@@ -102,14 +102,19 @@ const fetchData = async () => {
       apiClient('/users')
     ])
     
+    if (!prodRes.ok || !userRes.ok) {
+      throw new Error('Gagal mengambil data dari server')
+    }
+    
     const prodData = await prodRes.json()
     const userData = await userRes.json()
     
+    // Handle berbagai format response
     products.value = Array.isArray(prodData?.data) ? prodData.data : (Array.isArray(prodData) ? prodData : [])
     users.value = Array.isArray(userData?.data) ? userData.data : (Array.isArray(userData) ? userData : [])
     
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error('Error fetching dashboard data:', error)
   } finally {
     loading.value = false
   }

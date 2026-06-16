@@ -355,21 +355,21 @@ const fetchProducts = async () => {
 
     if (res.status === 401) {
       // Backend requires authentication — use local sample data so storefront still shows collections
-      console.warn('API requires authentication; showing sample products on storefront.')
+      console.info('Produk memerlukan autentikasi, menampilkan produk contoh.')
+      products.value = sampleProducts
+    } else if (!res.ok) {
+      console.warn(`Failed to fetch products: ${res.status} ${res.statusText}`)
       products.value = sampleProducts
     } else {
       const data = await res.json()
-      products.value = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+      const parsedData = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+      products.value = parsedData.length > 0 ? parsedData : sampleProducts
     }
   } catch (error) {
     console.error('Error fetching products:', error)
     products.value = sampleProducts
   } finally {
     loading.value = false
-    // Extra guard: if products still empty (edge cases / timing), show sample products
-    if (!products.value || products.value.length === 0) {
-      products.value = sampleProducts
-    }
   }
 }
 

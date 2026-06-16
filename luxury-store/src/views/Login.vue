@@ -99,11 +99,14 @@ const handleLogin = async () => {
     if (response.ok && data.data?.token) {
       localStorage.setItem('token', data.data.token)
       router.push('/admin/dashboard')
+    } else if (response.status === 401) {
+      errorMsg.value = 'Username atau password salah'
     } else {
-      errorMsg.value = data.message || 'Login gagal'
+      errorMsg.value = data.message || 'Login gagal. Silakan coba lagi.'
     }
   } catch (error) {
-    errorMsg.value = 'Koneksi ke server gagal'
+    console.error('Login error:', error)
+    errorMsg.value = 'Koneksi ke server gagal. Silakan cek koneksi Anda.'
   } finally {
     loading.value = false
   }
