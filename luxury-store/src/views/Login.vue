@@ -9,7 +9,7 @@
                 LUXURY
               </v-card-title>
               <v-card-subtitle class="text-center pb-8 text-secondary font-weight-medium tracking-widest">
-                ADMIN PORTAL
+                login
               </v-card-subtitle>
               
               <v-card-text class="px-10">
