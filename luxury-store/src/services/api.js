@@ -1,26 +1,4 @@
-// Konfigurasi URL API
-// Link asli API: https://luxury-store-api-2.vercel.app
-// Kita menggunakan '/api' di sini agar diarahkan melalui Proxy Vite (di file vite.config.js)
-// Alasan: Menghindari error CORS (Cross-Origin Resource Sharing) saat pengembangan di localhost
-// 
-// ENDPOINT YANG TERSEDIA:
-// - GET  /api/products          - Ambil semua produk
-// - POST /api/products          - Tambah produk baru
-// - PUT  /api/products/:id      - Update produk
-// - DELETE /api/products/:id    - Hapus produk
-// - GET  /api/brands            - Ambil semua merek
-// - POST /api/brands            - Tambah merek
-// - PUT  /api/brands/:id        - Update merek
-// - DELETE /api/brands/:id      - Hapus merek
-// - GET  /api/users             - Ambil semua user
-// - POST /api/users/register    - Registrasi user baru
-// - PUT  /api/users/:id         - Update user
-// - DELETE /api/users/:id       - Hapus user
-// - GET  /api/orders            - Ambil semua order
-// - POST /api/orders            - Buat order baru
-// - PUT  /api/orders/:id        - Update status order
-// - DELETE /api/orders/:id      - Hapus order
-// - POST /api/login             - Login user
+
 
 const API_URL = '/api'
 
